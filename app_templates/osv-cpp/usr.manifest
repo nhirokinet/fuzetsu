@@ -1,0 +1,2 @@
+[manifest]
+/a.out: ${APP_DIR}/a.out

@@ -1,0 +1,2 @@
+mv target.file Main.java
+javac -target 7 -source 7 Main.java

@@ -1,0 +1,2 @@
+[manifest]
+/Main.class: ${APP_DIR}/Main.class

@@ -1,0 +1,74 @@
+#!/bin/bash
+# this destroys the image file!
+RUNNING_DIR=$(pwd)
+OSV_FUZETSU_PATH=/opt/osv-fuzetsu
+FUZETSU_PATH=$(dirname $0)
+FUZETSU_PATH=$(cd "$FUZETSU_PATH"; pwd)
+
+if [ "$1" = "build" ]
+then
+	if [ $# -lt 4 ]
+	then
+		echo fuzetsu build \<app_template\> \<src\> \<target-image\>
+		exit 1
+	fi
+
+	TMP_DIR="/dev/shm/fuzetsu-$(date +%s%N)-$$-$RANDOM"
+	OUT_IMG="$4"
+	OUT_IMG=$(cd $(dirname "$OUT_IMG"); pwd)/$(basename "$OUT_IMG")
+	TEMPLATE_NAME="$2"
+
+	mkdir -p "$TMP_DIR/appitself"
+	
+	# memory usage in kilobytes. not suitable for hard coding.
+	ulimit -m 1024000
+	# virtual memory usage in kilobytes. not suitable for hard coding.
+	ulimit -v 3072000
+	# file size in blocks. not suitable for hard coding.
+	# block size is 512 bytes. 1638400 this is 800MiB.
+	ulimit -f 1638400
+
+	if [ ! -d "$FUZETSU_PATH/app_templates/$TEMPLATE_NAME" ]
+	then
+		echo No such language
+		exit 1
+	fi
+
+	cp -Rf "$FUZETSU_PATH/app_templates/$TEMPLATE_NAME"/* "$TMP_DIR/appitself"
+	cp "$3" "$TMP_DIR/appitself/target.file"
+	cd "$TMP_DIR/appitself"
+	timeout -sKILL 15 ./compile 2>&1 | head --bytes 10240 > "$TMP_DIR/appitself/error.log"
+	er=${PIPESTATUS[0]}
+
+	cat "$TMP_DIR/appitself/error.log"
+
+	if [ $er -ne 0 ]
+	then
+		rm -Rf "$TMP_DIR"
+		exit $er
+	fi
+
+	RUN_COMMAND=$(cat "$TMP_DIR/appitself/run_command")
+
+	cd "$RUNNING_DIR"
+	echo -n '' | timeout -sKILL 10 "$FUZETSU_PATH/osv-build.sh" "$TMP_DIR" "$OUT_IMG" "$RUN_COMMAND"
+	rm -rf "$TMP_DIR"
+
+	exit 0
+fi
+
+
+if [ "$1" = "run" ]
+then
+	if [ $# -lt 2 ]
+	then
+		echo fuzetsu run \</image/file\>
+		exit 1
+	fi
+	timeout -sKILL 5 qemu-system-x86_64 -m 256 -enable-kvm -cpu host,+x2apic -nographic -device virtio-blk-pci,id=blk0,bootindex=0,drive=hd0,scsi=off -drive file="$2",if=none,id=hd0,aio=native,cache=writeback -chardev stdio,mux=on,id=stdio,signal=off -mon chardev=stdio,mode=readline,default -device isa-serial,chardev=stdio
+	
+	exit $?
+fi
+
+echo 'Command Not Found'
+exit 1

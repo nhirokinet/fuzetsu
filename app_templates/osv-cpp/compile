@@ -1,0 +1,13 @@
+mv target.file target.cpp
+g++ -H -lm -pie -o a.out -fpie -rdynamic target.cpp 2>&1 | ./parse_gcc_h.pl 2>/dev/null
+
+ret=$?
+
+if [ $ret -eq 3 ]
+then
+	echo This source code includes unauthorized file. Aborting. 1>&2
+	echo If you feel this is wrong, please contact the manager. 1>&2
+	exit 1
+fi
+
+g++ -lm -pie -o a.out -fpie -rdynamic target.cpp
