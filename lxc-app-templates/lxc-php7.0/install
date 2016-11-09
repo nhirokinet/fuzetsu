@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/usr/bin/apt-get install -y php7.0

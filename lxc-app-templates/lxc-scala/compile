@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd /home/ubuntu/
+mv "$1" Main.scala
+scalac Main.scala

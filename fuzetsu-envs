@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export VMPATH=/home/flamehaze/fuzetsutmp
+HOME_IN_CONTAINER=/home/ubuntu
+COMPILING_SECONDS_LIMIT=10
+RUNNING_SECONDS_LIMIT=5

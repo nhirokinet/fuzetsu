@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# why? /tmp sometimes not writable in LXC container
+mv "$1" /home/ubuntu/target.c
+TMPDIR=/home/ubuntu /usr/bin/gcc -lm -std=c11 -O2 -pipe -o /home/ubuntu/a.out /home/ubuntu/target.c

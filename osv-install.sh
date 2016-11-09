@@ -5,7 +5,7 @@ read dummy
 
 rm -Rf /tmp/osv-fuzetsu
 cd /tmp
-git clone https://github.com/nhirokinet/osv-fuzetsu.git
+git clone http://gitlab.tokyo.nhiroki.net/nhirokinet/osv-fuzetsu.git
 cd /tmp/osv-fuzetsu
 git submodule update --init --recursive
 cd /tmp/osv-fuzetsu
