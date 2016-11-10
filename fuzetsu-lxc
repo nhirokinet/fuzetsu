@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 . /opt/fuzetsu/fuzetsu-envs
 MYVMPATH=`eval echo ~$(whoami)`/fuzetsutmp
@@ -32,7 +32,7 @@ then
 	# TODO: catch error from lxc
 	lxc-attach > "$TMP_DIR/appitself/error.log" 2>&1 -P $MYVMPATH -n $VMNAME -- timeout -sKILL $COMPILING_SECONDS_LIMIT /bin/bash -c 'ulimit -Hf 1638400; sudo -u ubuntu /usr/bin/compile '$HOME_IN_CONTAINER/target.file
 	er=$?
-	lxc-stop -P $MYVMPATH -n $VMNAME
+	lxc-stop -P $MYVMPATH -n $VMNAME -t 3
 
 	cat "$TMP_DIR/appitself/error.log"
 
@@ -96,7 +96,7 @@ then
 
 	VMNAME="$2"
 
-	lxc-destroy -P $MYVMPATH -n $VMNAME
+	lxc-destroy -P $MYVMPATH -n $VMNAME -f
 	exit $?
 fi
 
