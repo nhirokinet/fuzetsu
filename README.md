@@ -1,8 +1,8 @@
-you need to install libyaml-cpp-dev, make, g++
+you need to install lxc
 ```
 sudo useradd flamehaze
-sudo usermod -aG kvm flamehaze
-sudo aptitude install make g++ libyaml-cpp-dev python-daemon
-sudo make osv
 sudo make install
+sudo make lxc
 ```
+
+developed and tested under Ubuntu 16.04
