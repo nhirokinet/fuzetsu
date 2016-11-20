@@ -23,7 +23,7 @@ then
 	# block size is 512 bytes. 1638400 is as large as 800MiB.
 	ulimit -f 1638400
 	
-	lxc-destroy -f -p $MYVMPATH -n $VMNAME -n $TEMPLATE_NAME >/dev/null
+	lxc-destroy -f -P $MYVMPATH -n $VMNAME >/dev/null
 	lxc-copy -p $VMPATH -P $MYVMPATH -N $VMNAME -n $TEMPLATE_NAME -B overlayfs -s >/dev/null
 	lxc-start -P $MYVMPATH -n $VMNAME -d --logfile /tmp/fuzetsu.log
 	lxc-wait -P $MYVMPATH -n $VMNAME -s RUNNING
@@ -51,7 +51,7 @@ then
 	cat > /tmp/fuzetsuinput
 	if [ $# -lt 2 ]
 	then
-		echo fuzetsu run \</target_name\>
+		echo fuzetsu run \</target_name\> \<time_out\>
 		exit 1
 	fi
 	# file size in blocks. not suitable for hard coding.
@@ -60,12 +60,13 @@ then
 
 	TMP_VMNAME="$(date +%s%N)-$$-$RANDOM"
 	VMNAME="$2"
+	TIMEOUT_IN_SEC="$3"
 
 	lxc-copy -P $MYVMPATH -p $MYVMPATH -N $TMP_VMNAME -n $VMNAME -B overlayfs -s >/dev/null
 	lxc-start -P $MYVMPATH -n $TMP_VMNAME -d >/dev/null
 	lxc-wait -P $MYVMPATH -n $TMP_VMNAME -s RUNNING >/dev/null
 	start_time=`date +%s%N`
-	lxc-attach -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'ulimit -Hf 1638400; timeout -sKILL '$RUNNING_SECONDS_LIMIT' sudo -u ubuntu /usr/bin/time -o /home/ubuntu/fuzetsu-mem-usage -f "%M" --quiet `cat /usr/bin/run`' < /tmp/fuzetsuinput
+	lxc-attach -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'ulimit -Hf 1638400; timeout -sKILL '$TIMEOUT_IN_SEC' sudo -u ubuntu /usr/bin/time -o /home/ubuntu/fuzetsu-mem-usage -f "%M" --quiet `cat /usr/bin/run`' < /tmp/fuzetsuinput
 	er=$?
 	end_time=`date +%s%N`
 	lxc-attach -P $MYVMPATH -n $TMP_VMNAME cat /home/ubuntu/fuzetsu-mem-usage | tail -n 1 > /tmp/fuzetsu-mem-usage
