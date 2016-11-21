@@ -29,7 +29,7 @@ function disconnect_from_network () {
 function install_app_template () {
 	vm_name=$1
 	sudo -H -u flamehaze lxc-destroy -P $VMPATH -n $vm_name -f
-	sudo -H -u flamehaze lxc-copy -P $VMPATH -p $VMPATH -N $vm_name -n `cat ./lxc-app-templates/$vm_name/base_image` -B overlayfs -s
+	sudo -H -u flamehaze lxc-copy -P $VMPATH -p $VMPATH -N $vm_name -n `cat ./lxc-app-templates/$vm_name/base_image`
 	start_vm $vm_name
 	sudo -H -u flamehaze lxc-attach -P $VMPATH -n $vm_name -- /usr/bin/tee /usr/bin/install < ./lxc-app-templates/$vm_name/install > /dev/null
 	sudo -H -u flamehaze lxc-attach -P $VMPATH -n $vm_name -- chmod +x /usr/bin/install
