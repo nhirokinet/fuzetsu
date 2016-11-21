@@ -61,6 +61,10 @@ function after_install () {
 	cp lxc-config-files/lxc-usernet-after-install /etc/lxc/lxc-usernet
 }
 
+id -u flamehaze || sudo useradd flamehaze -d /var/flamehaze
+mkdir ~flamehaze -p
+chown flamehaze ~flamehaze
+
 cp lxc-config-files/subuid /etc/subuid
 cp lxc-config-files/subgid /etc/subgid
 cp lxc-config-files/lxc-usernet-during-install /etc/lxc/lxc-usernet

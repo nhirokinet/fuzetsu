@@ -1,5 +1,5 @@
 #!/bin/bash
 
-export VMPATH=/home/flamehaze/fuzetsutmp
+export VMPATH=`echo $(eval echo ~flamehaze)`/fuzetsutmp
 HOME_IN_CONTAINER=/home/ubuntu
 COMPILING_SECONDS_LIMIT=10
