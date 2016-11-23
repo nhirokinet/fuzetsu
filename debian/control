@@ -1,0 +1,15 @@
+Source: fuzetsu
+Section: unknown
+Priority: optional
+Maintainer: nhirokinet <nhirokinet@nhiroki.net>
+Build-Depends: debhelper (>=9), lxc
+Standards-Version: 3.9.6
+Homepage: https://github.com/nhirokinet/fuzetsu
+Vcs-Git: git@github.com:nhirokinet/fuzetsu.git
+Vcs-Browser: https://github.com/nhirokinet/fuzetsu
+
+Package: fuzetsu
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, lxc
+Description: Fuzetsu environment for competitive programming
+ Runs submitted source code in safe environment.

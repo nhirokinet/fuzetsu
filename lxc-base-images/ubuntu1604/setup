@@ -1,11 +1,12 @@
 #!/bin/bash
 
 vm_name=ubuntu1604
+FLAMEHAZE_USER=flamehaze
 
 function start_vm () {
 	vm_name=$1
-	sudo -H -u flamehaze lxc-start -P $VMPATH -n $vm_name -d --logfile /tmp/fuzetsu-log
-	sudo -H -u flamehaze lxc-wait -P $VMPATH -n $vm_name -s RUNNING
+	sudo -H -u $FLAMEHAZE_USER lxc-start -P $VMPATH -n $vm_name -d --logfile /tmp/fuzetsu-log
+	sudo -H -u $FLAMEHAZE_USER lxc-wait -P $VMPATH -n $vm_name -s RUNNING
 	wait_for_network $vm_name
 }
 
@@ -13,18 +14,18 @@ function wait_for_network () {
 	vm_name=$1
 	while true
 	do
-		sudo -H -u flamehaze lxc-attach -P $VMPATH -n $vm_name --  /sbin/ip addr | grep inet | grep eth && break
+		sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name --  /sbin/ip addr | grep inet | grep eth && break
 		sleep 1
 	done
 	sleep 1
 }
 
-sudo -H -u flamehaze lxc-destroy -P $VMPATH -n $vm_name -f
-sudo -H -u flamehaze lxc-create -P $VMPATH -n $vm_name --template download -- --dist ubuntu --release xenial --arch amd64
+sudo -H -u $FLAMEHAZE_USER lxc-destroy -P $VMPATH -n $vm_name -f
+sudo -H -u $FLAMEHAZE_USER lxc-create -P $VMPATH -n $vm_name --template download -- --dist ubuntu --release xenial --arch amd64
 start_vm $vm_name
 wait_for_network $vm_name
-sudo -H -u flamehaze lxc-attach -P $VMPATH -n $vm_name -- gpasswd -d ubuntu sudo
-sudo -H -u flamehaze lxc-attach -P $VMPATH -n $vm_name -- apt-get install time -y
-sudo -H -u flamehaze lxc-attach -P $VMPATH -n $vm_name -- apt-get update
-sudo -H -u flamehaze lxc-attach -P $VMPATH -n $vm_name -- apt-get upgrade -y
-sudo -H -u flamehaze lxc-stop -P $VMPATH -n $vm_name
+sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- gpasswd -d ubuntu sudo
+sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- apt-get install time -y
+sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- apt-get update
+sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- apt-get upgrade -y
+sudo -H -u $FLAMEHAZE_USER lxc-stop -P $VMPATH -n $vm_name
