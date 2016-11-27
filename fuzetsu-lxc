@@ -69,7 +69,7 @@ then
 	lxc-wait -P $MYVMPATH -n $TMP_VMNAME -s RUNNING >/dev/null
 	lxc-attach >/dev/null  2&>1 -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'echo 127.0.1.1 $(hostname) >> /etc/hosts'
 	start_time=`date +%s%N`
-	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'ulimit -Hf 1638400; timeout -sKILL '$TIMEOUT_IN_SEC' sudo -u ubuntu /usr/bin/time -o /home/ubuntu/fuzetsu-mem-usage -f "%M" --quiet `cat /usr/bin/run`' < /tmp/fuzetsuinput | cat
+	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'ulimit -Hf 1638400; timeout -sKILL '$TIMEOUT_IN_SEC' sudo -u ubuntu /usr/bin/time -o /home/ubuntu/fuzetsu-mem-usage -f "%M" --quiet `cat /usr/bin/run`' < /tmp/fuzetsuinput
 	er=$?
 	end_time=`date +%s%N`
 	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME cat /home/ubuntu/fuzetsu-mem-usage | tail -n 1 > /tmp/fuzetsu-mem-usage
