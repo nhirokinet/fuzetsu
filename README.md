@@ -11,14 +11,19 @@ sudo make lxc
 
 ### Build dpkg file
 ```
-sudo apt install make lxc
+sudo useradd flamehaze -d /var/flamehaze
+sudo mkdir -p /var/flamehaze
+sudo chown flamehaze.flamehaze /var/flamehaze
+
+sudo apt install make lxc build-essential fakeroot debhelper
 sudo make lxc-tar
 make dpkg
 ```
 
 ### Install dpkg file
 ```
-sudo apt install make lxc
+sudo useradd flamehaze
+sudo apt install lxc
 sudo dpkg -i fuzetsu_0.0.1_amd64.deb
 ```
 

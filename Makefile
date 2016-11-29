@@ -33,5 +33,5 @@ lxc:
 
 lxc-tar:
 	./lxc-install.sh
-	(cd /var/flamehaze; tar czvf fuzetsutmp.tar.gz fuzetsutmp); mv /var/flamehaze/fuzetsutmp.tar.gz .
+	(cd /var/flamehaze; tar czf fuzetsutmp.tar.gz fuzetsutmp); mv /var/flamehaze/fuzetsutmp.tar.gz .
 	rm -rf /var/flamehaze/
