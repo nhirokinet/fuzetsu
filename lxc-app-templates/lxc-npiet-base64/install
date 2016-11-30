@@ -1,0 +1,11 @@
+#!/bin/sh -x
+
+/usr/bin/apt-get install -y libgd3 libgd-dev groff bison
+cd /tmp
+# https://www.bertnase.de/npiet/
+wget https://www.bertnase.de/npiet/npiet-1.3e.tar.gz -O npiet-1.3e.tar.gz
+tar xzvf npiet-1.3e.tar.gz
+cd npiet-1.3e
+./configure
+make
+sudo make install
