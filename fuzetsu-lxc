@@ -1,13 +1,13 @@
 #!/bin/bash
 
-. /opt/fuzetsu/fuzetsu-envs
+. /usr/bin/fuzetsu-envs
 MYVMPATH=`eval echo ~$(whoami)`/fuzetsutmp
 
 if [ "$1" = "build" ]
 then
 	if [ $# -lt 4 ]
 	then
-		echo fuzetsu build \<app_template_name\> \<src\> \<target_name\>
+		echo fuzetsu lxc build \<app_template_name\> \<src\> \<target_name\>
 		exit 1
 	fi
 
@@ -27,7 +27,7 @@ then
 	lxc-copy -p $VMPATH -P $MYVMPATH -N $VMNAME -n $TEMPLATE_NAME -B overlayfs -s >/dev/null
 	lxc-start -P $MYVMPATH -n $VMNAME -d --logfile /tmp/fuzetsu.log
 	lxc-wait -P $MYVMPATH -n $VMNAME -s RUNNING
-	lxc-attach -P $MYVMPATH -n $VMNAME -- /bin/bash -c 'echo 127.0.1.1 $(hostname) >> /etc/hosts'
+	lxc-attach > /dev/null -P $MYVMPATH -n $VMNAME -- /bin/bash -c 'echo 127.0.1.1 $(hostname) >> /etc/hosts'
 	lxc-attach < $SRC_FILE > /dev/null -P $MYVMPATH -n $VMNAME -- /usr/bin/tee $HOME_IN_CONTAINER/target.file
 	# TODO: catch error from lxc
 	lxc-attach > "$TMP_DIR/appitself/error.log" 2>&1 -P $MYVMPATH -n $VMNAME -- timeout -sKILL $COMPILING_SECONDS_LIMIT /bin/bash -c 'ulimit -Hf 1638400; sudo -u ubuntu /usr/bin/compile '$HOME_IN_CONTAINER/target.file
@@ -48,12 +48,14 @@ fi
 
 if [ "$1" = "run" ]
 then
-	cat > /tmp/fuzetsuinput
-	if [ $# -lt 2 ]
+	if [ $# -lt 3 ]
 	then
-		echo fuzetsu run \</target_name\> \<time_out\>
+		echo fuzetsu lxc run \</target_name\> \<time_out\>
 		exit 1
 	fi
+
+	cat > /tmp/fuzetsuinput
+
 	# file size in blocks. not suitable for hard coding.
 	# block size is 512 bytes. 1638400 is as large as 800MiB.
 	ulimit -f 1638400
@@ -65,15 +67,14 @@ then
 	lxc-copy -P $MYVMPATH -p $MYVMPATH -N $TMP_VMNAME -n $VMNAME -B overlayfs -s >/dev/null
 	lxc-start -P $MYVMPATH -n $TMP_VMNAME -d >/dev/null
 	lxc-wait -P $MYVMPATH -n $TMP_VMNAME -s RUNNING >/dev/null
+	lxc-attach >/dev/null  2&>1 -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'echo 127.0.1.1 $(hostname) >> /etc/hosts'
 	start_time=`date +%s%N`
-	lxc-attach -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'ulimit -Hf 1638400; timeout -sKILL '$TIMEOUT_IN_SEC' sudo -u ubuntu /usr/bin/time -o /home/ubuntu/fuzetsu-mem-usage -f "%M" --quiet `cat /usr/bin/run`' < /tmp/fuzetsuinput
+	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'ulimit -Hf 1638400; timeout -sKILL '$TIMEOUT_IN_SEC' sudo -u ubuntu /usr/bin/time -o /home/ubuntu/fuzetsu-mem-usage -f "%M" --quiet `cat /usr/bin/run`' < /tmp/fuzetsuinput
 	er=$?
 	end_time=`date +%s%N`
-	lxc-attach -P $MYVMPATH -n $TMP_VMNAME cat /home/ubuntu/fuzetsu-mem-usage | tail -n 1 > /tmp/fuzetsu-mem-usage
+	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME cat /home/ubuntu/fuzetsu-mem-usage | tail -n 1 > /tmp/fuzetsu-mem-usage
 	echo `expr $end_time - $start_time` > /tmp/fuzetsu-time-ns
-	tail -n 1 /tmp/fuzetsu-time-tmp > /tmp/fuzetsu-time
-	rm /tmp/fuzetsu-time-tmp
-	lxc-stop -k -P $MYVMPATH -n $TMP_VMNAME -t 3 >/dev/null
+	lxc-stop -k -P $MYVMPATH -n $TMP_VMNAME >/dev/null
 	lxc-destroy -P $MYVMPATH -n $TMP_VMNAME -f >/dev/null
 
 	rm /tmp/fuzetsuinput

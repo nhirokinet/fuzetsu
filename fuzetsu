@@ -3,14 +3,7 @@
 if [ "$1" = "lxc" ]
 then
 	shift
-	/opt/fuzetsu/fuzetsu-lxc $@
-	exit $?
-fi
-
-if [ "$1" = "osv" ]
-then
-	shift
-	/opt/fuzetsu/fuzetsu-osv $@
+	fuzetsu-lxc $@
 	exit $?
 fi
 

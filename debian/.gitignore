@@ -1,0 +1,5 @@
+debhelper-build-stamp
+files
+fuzetsu.debhelper.log
+fuzetsu.substvars
+fuzetsu

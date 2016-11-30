@@ -1,0 +1,67 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" (C) Copyright 2016 nhirokinet <nhirokinet@nhiroki.net>,
+.\"
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH Fuzetsu SECTION "November 23 2016"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+fuzetsu \- program to do something
+.SH SYNOPSIS
+.B fuzetsu
+build
+.IR "vm_type app_template source_file vm_name"
+.br
+.B fuzetsu
+run
+.IR "vm_type vm_name timeout"
+.SH DESCRIPTION
+.B fuzetsu 
+runs input program under safe environment, with specified virtualizer.
+.br
+Note that 
+.B fuzetsu
+must be run under
+.B sudo -H -u flamehaze
+\.
+commands.
+ 
+.B fuzetsu build
+builds a VM (in lxc mode actually a container), usually with compiling the source code with specified name.
+.br
+.B fuzetsu run
+runs the specified VM.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics,
+.\" respectively.
+.SH OPTIONS
+.TP
+.B vm_type
+Currently only "lxc" is supported.
+.TP
+.B app_template
+Template name like "lxc-cpp11".
+.TP
+.B source_file
+Source file location like "hoge.cpp".
+.TP
+.B vm_name
+Under lxc, specify the name, not specific file.
+.B fuzetsu lxc
+puts files in specific location.
+.TP
+.B timeout
+Time limitation in seconds
