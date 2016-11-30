@@ -32,9 +32,9 @@ function install_app_template () {
 	sudo -H -u $FLAMEHAZE_USER lxc-destroy -P $VMPATH -n $vm_name -f
 	sudo -H -u $FLAMEHAZE_USER lxc-copy -P $VMPATH -p $VMPATH -N $vm_name -n `cat ./lxc-app-templates/$vm_name/base_image` -B overlayfs -s
 	start_vm $vm_name
-	sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- /usr/bin/tee /usr/bin/install < ./lxc-app-templates/$vm_name/install > /dev/null
-	sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- chmod +x /usr/bin/install
-	sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- /usr/bin/install
+	sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- /usr/bin/tee /usr/bin/install_app < ./lxc-app-templates/$vm_name/install > /dev/null
+	sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- chmod +x /usr/bin/install_app
+	sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- /usr/bin/install_app
 	sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- /usr/bin/tee /usr/bin/compile < ./lxc-app-templates/$vm_name/compile > /dev/null
 	sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- chmod +x /usr/bin/compile
 	sudo -H -u $FLAMEHAZE_USER lxc-attach -P $VMPATH -n $vm_name -- /usr/bin/tee /usr/bin/run < ./lxc-app-templates/$vm_name/run > /dev/null
