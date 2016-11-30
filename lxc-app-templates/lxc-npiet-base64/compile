@@ -1,3 +1,4 @@
 #!/bin/bash
 
-base64 -d "$1" > /home/ubuntu/main.png
+cat "$1" | tr -d '\r' > /home/ubuntu/main.base64
+base64 -d /home/ubuntu/main.base64 > /home/ubuntu/main.png
