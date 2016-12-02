@@ -34,7 +34,8 @@ then
 	er=$?
 	lxc-stop -P $MYVMPATH -n $VMNAME -t 3
 
-	cat "$TMP_DIR/appitself/error.log"
+	# output up to 102400 bytes.
+	head -c 102400 -n 102400 "$TMP_DIR/appitself/error.log"
 
 	if [ $er -ne 0 ]
 	then
