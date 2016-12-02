@@ -34,8 +34,8 @@ then
 	er=$?
 	lxc-stop -P $MYVMPATH -n $VMNAME -t 3
 
-	# output up to 102400 bytes.
-	head -c 102400 -n 102400 "$TMP_DIR/appitself/error.log"
+	# output up to 1048576 bytes.
+	head -c 1048576 -n 1048576 "$TMP_DIR/appitself/error.log"
 
 	if [ $er -ne 0 ]
 	then
@@ -70,9 +70,13 @@ then
 	lxc-wait -P $MYVMPATH -n $TMP_VMNAME -s RUNNING >/dev/null
 	lxc-attach >/dev/null  2&>1 -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'echo 127.0.1.1 $(hostname) >> /etc/hosts'
 	start_time=`date +%s%N`
-	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'ulimit -Hf 1638400; timeout -sKILL '$TIMEOUT_IN_SEC' sudo -u ubuntu /usr/bin/time -o /home/ubuntu/fuzetsu-mem-usage -f "%M" --quiet `cat /usr/bin/run`' < /tmp/fuzetsuinput
+	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'ulimit -Hf 1638400; timeout -sKILL '$TIMEOUT_IN_SEC' sudo -u ubuntu /usr/bin/time -o /home/ubuntu/fuzetsu-mem-usage -f "%M" --quiet `cat /usr/bin/run`' < /tmp/fuzetsuinput >/tmp/fuzetsuoutput
 	er=$?
 	end_time=`date +%s%N`
+	# output up to 1048576 bytes.
+	head -c 1048576 -n 1048576 /tmp/fuzetsuoutput
+	rm /tmp/fuzetsuoutput
+
 	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME cat /home/ubuntu/fuzetsu-mem-usage | tail -n 1 > /tmp/fuzetsu-mem-usage
 	echo `expr $end_time - $start_time` > /tmp/fuzetsu-time-ns
 	lxc-stop -k -P $MYVMPATH -n $TMP_VMNAME >/dev/null
