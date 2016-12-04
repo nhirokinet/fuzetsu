@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 vm_name=ubuntu1604
 FLAMEHAZE_USER=flamehaze
