@@ -30,12 +30,9 @@ then
 	lxc-attach > /dev/null -P $MYVMPATH -n $VMNAME -- /bin/bash -c 'echo 127.0.1.1 $(hostname) >> /etc/hosts'
 	lxc-attach < $SRC_FILE > /dev/null -P $MYVMPATH -n $VMNAME -- /usr/bin/tee $HOME_IN_CONTAINER/target.file
 	# TODO: catch error from lxc
-	lxc-attach > "$TMP_DIR/appitself/error.log" 2>&1 -P $MYVMPATH -n $VMNAME -- timeout -sKILL $COMPILING_SECONDS_LIMIT /bin/bash -c 'ulimit -Hf 1638400; sudo -u ubuntu /usr/bin/compile '$HOME_IN_CONTAINER/target.file
+	lxc-attach 2>&1 -P $MYVMPATH -n $VMNAME -- timeout -sKILL $COMPILING_SECONDS_LIMIT /bin/bash -c 'ulimit -Hf 1638400; sudo -u ubuntu /usr/bin/compile '$HOME_IN_CONTAINER/target.file
 	er=$?
 	lxc-stop -P $MYVMPATH -n $VMNAME -t 3
-
-	# output up to 1048576 bytes.
-	head -c 1048576 -n 1048576 "$TMP_DIR/appitself/error.log"
 
 	if [ $er -ne 0 ]
 	then
