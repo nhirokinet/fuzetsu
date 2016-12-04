@@ -30,9 +30,9 @@ then
 	lxc-attach > /dev/null -P $MYVMPATH -n $VMNAME -- /bin/bash -c 'echo 127.0.1.1 $(hostname) >> /etc/hosts'
 	lxc-attach < $SRC_FILE > /dev/null -P $MYVMPATH -n $VMNAME -- /usr/bin/tee $HOME_IN_CONTAINER/target.file
 	# TODO: catch error from lxc
-	lxc-attach 2>&1 -P $MYVMPATH -n $VMNAME -- timeout -sKILL $COMPILING_SECONDS_LIMIT /bin/bash -c 'ulimit -Hf 1638400; sudo -u ubuntu /usr/bin/compile '$HOME_IN_CONTAINER/target.file
+	lxc-attach 2>&1 -P $MYVMPATH -n $VMNAME -- timeout $COMPILING_SECONDS_LIMIT /bin/bash -c 'ulimit -Hf 1638400; sudo -u ubuntu /usr/bin/compile '$HOME_IN_CONTAINER/target.file
 	er=$?
-	lxc-stop -P $MYVMPATH -n $VMNAME -t 3
+	lxc-stop -P $MYVMPATH -n $VMNAME -t 2
 
 	if [ $er -ne 0 ]
 	then
@@ -65,9 +65,12 @@ then
 	lxc-wait -P $MYVMPATH -n $TMP_VMNAME -s RUNNING >/dev/null
 	lxc-attach >/dev/null  2>&1 -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'echo 127.0.1.1 $(hostname) >> /etc/hosts'
 	start_time=`date +%s%N`
-	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'ulimit -Hf 1638400; timeout -sKILL '$TIMEOUT_IN_SEC' sudo -u ubuntu /usr/bin/time -o /home/ubuntu/fuzetsu-mem-usage -f "%M" --quiet `cat /usr/bin/run`'
+	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME -- /bin/bash -c 'ulimit -Hf 1638400; timeout '$TIMEOUT_IN_SEC' sudo -u ubuntu /usr/bin/time -o /home/ubuntu/fuzetsu-mem-usage -f "%M" --quiet `cat /usr/bin/run`'
 	er=$?
 	end_time=`date +%s%N`
+	lxc-stop -k -P $MYVMPATH -n $TMP_VMNAME >/dev/null
+	lxc-start -P $MYVMPATH -n $TMP_VMNAME -d >/dev/null
+	lxc-wait -P $MYVMPATH -n $TMP_VMNAME -s RUNNING >/dev/null
 
 	lxc-attach 2> /dev/null -P $MYVMPATH -n $TMP_VMNAME cat /home/ubuntu/fuzetsu-mem-usage | tail -n 1 > /tmp/fuzetsu-mem-usage
 	echo `expr $end_time - $start_time` > /tmp/fuzetsu-time-ns
