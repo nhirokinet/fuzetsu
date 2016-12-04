@@ -32,6 +32,8 @@ lxc:
 	./lxc-install.sh
 
 lxc-tar:
+	cp fuzetsu fuzetsu-envs fuzetsu-lxc /usr/bin/
 	./lxc-install.sh
+	make all -C ./tests
 	(cd /var/flamehaze; tar czf fuzetsutmp.tar.gz fuzetsutmp/); mv /var/flamehaze/fuzetsutmp.tar.gz .
-	rm -rf /var/flamehaze/fuzetsutmp
+	rm -rf /var/flamehaze/fuzetsutmp /usr/bin/fuzetsu /usr/bin/fuzetsu-envs /usr/bin/fuzetsu-lxc
